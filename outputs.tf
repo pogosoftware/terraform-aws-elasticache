@@ -23,3 +23,11 @@ output "subnet_group_subnet_ids" {
   description = "The Subnet IDs of the ElastiCache Subnet Group"
   value       = try(module.subnet_group[0].this.subnet_ids, "")
 }
+
+##########################################################################
+### USER
+##########################################################################
+output "users" {
+  description = "The users id and arn"
+  value       = { for k, v in var.users : k => module.user[k] }
+}
