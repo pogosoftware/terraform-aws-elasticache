@@ -18,6 +18,7 @@ No providers.
 | <a name="module_parameter_group"></a> [parameter\_group](#module\_parameter\_group) | ./modules/parameter_group | n/a |
 | <a name="module_subnet_group"></a> [subnet\_group](#module\_subnet\_group) | ./modules/subnet_group | n/a |
 | <a name="module_user"></a> [user](#module\_user) | ./modules/user | n/a |
+| <a name="module_user_group"></a> [user\_group](#module\_user\_group) | ./modules/user_group | n/a |
 
 ## Resources
 
@@ -38,6 +39,7 @@ No resources.
 | <a name="input_subnet_group_name"></a> [subnet\_group\_name](#input\_subnet\_group\_name) | Name for the cache subnet group | `string` | `""` | no |
 | <a name="input_subnet_group_subnet_ids"></a> [subnet\_group\_subnet\_ids](#input\_subnet\_group\_subnet\_ids) | List of VPC Subnet IDs for the cache subnet group | `list(string)` | `[]` | no |
 | <a name="input_subnet_group_tags"></a> [subnet\_group\_tags](#input\_subnet\_group\_tags) | Key-value map of resource tags | `map(string)` | `{}` | no |
+| <a name="input_user_groups"></a> [user\_groups](#input\_user\_groups) | Map of user groups with group id as a key | `map(any)` | `{}` | no |
 | <a name="input_user_tags"></a> [user\_tags](#input\_user\_tags) | A list of tags to be added to this resource | `map(string)` | `{}` | no |
 | <a name="input_users"></a> [users](#input\_users) | Map of users to create where `user_id` is a key | `map(any)` | `{}` | no |
 
@@ -49,5 +51,6 @@ No resources.
 | <a name="output_parameter_group_id"></a> [parameter\_group\_id](#output\_parameter\_group\_id) | The ElastiCache parameter group name |
 | <a name="output_subnet_group_name"></a> [subnet\_group\_name](#output\_subnet\_group\_name) | The Name of the ElastiCache Subnet Group |
 | <a name="output_subnet_group_subnet_ids"></a> [subnet\_group\_subnet\_ids](#output\_subnet\_group\_subnet\_ids) | The Subnet IDs of the ElastiCache Subnet Group |
+| <a name="output_user_groups"></a> [user\_groups](#output\_user\_groups) | The users group id |
 | <a name="output_users"></a> [users](#output\_users) | The users id and arn |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

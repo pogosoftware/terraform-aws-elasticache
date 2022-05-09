@@ -87,3 +87,12 @@ variable "user_tags" {
   description = "A list of tags to be added to this resource"
   type        = map(string)
 }
+
+##########################################################################
+### USER GROUP
+##########################################################################
+variable "user_groups" {
+  default     = {}
+  description = "Map of user groups with group id as a key"
+  type        = map(any)
+}
