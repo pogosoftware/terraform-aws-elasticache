@@ -31,3 +31,11 @@ output "users" {
   description = "The users id and arn"
   value       = { for k, v in var.users : k => module.user[k] }
 }
+
+##########################################################################
+### USER GROUP
+##########################################################################
+output "user_groups" {
+  description = "The users group id"
+  value       = { for k, v in var.user_groups : k => module.user_group[k] }
+}

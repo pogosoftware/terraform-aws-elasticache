@@ -37,3 +37,14 @@ module "user" {
 
   tags = var.user_tags
 }
+
+module "user_group" {
+  source = "./modules/user_group"
+
+  for_each = var.user_groups
+
+  engine             = each.value.engine
+  user_group_id      = each.key
+  external_users_ids = lookup(each.value, "external_users_ids", [])
+  user_ids           = [for k, v in module.user : module.user[k].user_id]
+}
