@@ -72,3 +72,18 @@ variable "subnet_group_tags" {
   description = "Key-value map of resource tags"
   type        = map(string)
 }
+
+##########################################################################
+### USER
+##########################################################################
+variable "users" {
+  default     = {}
+  description = "Map of users to create where `user_id` is a key"
+  type        = map(any)
+}
+
+variable "user_tags" {
+  default     = {}
+  description = "A list of tags to be added to this resource"
+  type        = map(string)
+}
