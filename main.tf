@@ -1,7 +1,7 @@
 module "parameter_group" {
   source = "./modules/parameter_group"
 
-  count = var.create_parameter_group
+  count = var.create_parameter_group ? 1 : 0
 
   name        = var.parameter_group_name
   family      = var.parameter_group_family
@@ -14,7 +14,7 @@ module "parameter_group" {
 module "subnet_group" {
   source = "./modules/subnet_group"
 
-  count = var.create_subnet_group
+  count = var.create_subnet_group ? 1 : 0
 
   name        = var.subnet_group_name
   description = var.subnet_group_description
@@ -52,7 +52,7 @@ module "user_group" {
 module "replication_group" {
   source = "./modules/replication_group"
 
-  count = var.create_replication_group
+  count = var.create_replication_group ? 1 : 0
 
   description          = var.replication_group_description
   replication_group_id = var.replication_group_replication_group_id
