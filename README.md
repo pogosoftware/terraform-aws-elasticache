@@ -1,4 +1,4 @@
-# terraform-aws-rds
+# terraform-aws-elasticache
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -15,11 +15,11 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_db_parameter_group"></a> [db\_parameter\_group](#module\_db\_parameter\_group) | ./modules/db_parameter_group | n/a |
-| <a name="module_db_subnet_group"></a> [db\_subnet\_group](#module\_db\_subnet\_group) | ./modules/db_subnet_group | n/a |
-| <a name="module_rds_cluster"></a> [rds\_cluster](#module\_rds\_cluster) | ./modules/rds_cluster | n/a |
-| <a name="module_rds_cluster_instance"></a> [rds\_cluster\_instance](#module\_rds\_cluster\_instance) | ./modules/rds_cluster_instance | n/a |
-| <a name="module_rds_cluster_parameter_group"></a> [rds\_cluster\_parameter\_group](#module\_rds\_cluster\_parameter\_group) | ./modules/rds_cluster_parameter_group | n/a |
+| <a name="module_parameter_group"></a> [parameter\_group](#module\_parameter\_group) | ./modules/parameter_group | n/a |
+| <a name="module_replication_group"></a> [replication\_group](#module\_replication\_group) | ./modules/replication_group | n/a |
+| <a name="module_subnet_group"></a> [subnet\_group](#module\_subnet\_group) | ./modules/subnet_group | n/a |
+| <a name="module_user"></a> [user](#module\_user) | ./modules/user | n/a |
+| <a name="module_user_group"></a> [user\_group](#module\_user\_group) | ./modules/user_group | n/a |
 
 ## Resources
 
@@ -29,110 +29,70 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_allocated_storage"></a> [allocated\_storage](#input\_allocated\_storage) | he amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. (This setting is required to create a Multi-AZ DB cluster) | `string` | `null` | no |
-| <a name="input_allow_major_version_upgrade"></a> [allow\_major\_version\_upgrade](#input\_allow\_major\_version\_upgrade) | Enable to allow major engine version upgrades when changing engine versions. Defaults to `false` | `bool` | `false` | no |
-| <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Specifies whether any cluster modifications are applied immediately, or during the next maintenance window. Default is `false` | `bool` | `false` | no |
-| <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | A list of EC2 Availability Zones for the DB cluster storage where DB cluster instances can be created. RDS automatically assigns 3 AZs if less than 3 AZs are configured, which will show as a difference requiring resource recreation next Terraform apply | `list(string)` | `null` | no |
-| <a name="input_backtrack_window"></a> [backtrack\_window](#input\_backtrack\_window) | The target backtrack window, in seconds. Only available for `aurora` and `aurora-mysql` engines currently. Defaults to `0` | `number` | `0` | no |
-| <a name="input_backup_retention_period"></a> [backup\_retention\_period](#input\_backup\_retention\_period) | The days to retain backups for. Default `1` | `number` | `1` | no |
-| <a name="input_cluster_identifier"></a> [cluster\_identifier](#input\_cluster\_identifier) | Required when `create_rds_cluster` is true. The cluster identifier | `string` | `""` | no |
-| <a name="input_cluster_timeouts"></a> [cluster\_timeouts](#input\_cluster\_timeouts) | Create, update, and delete timeout configurations for the cluster | `map(string)` | `{}` | no |
-| <a name="input_copy_tags_to_snapshot"></a> [copy\_tags\_to\_snapshot](#input\_copy\_tags\_to\_snapshot) | Copy all Cluster `tags` to snapshots | `bool` | `false` | no |
-| <a name="input_create_db_parameter_group"></a> [create\_db\_parameter\_group](#input\_create\_db\_parameter\_group) | Whether to create this resource or not? | `bool` | `true` | no |
-| <a name="input_create_db_subnet_group"></a> [create\_db\_subnet\_group](#input\_create\_db\_subnet\_group) | Whether to create this resource or not? | `bool` | `true` | no |
-| <a name="input_create_rds_cluster"></a> [create\_rds\_cluster](#input\_create\_rds\_cluster) | Whether to create this resource or not? | `bool` | `true` | no |
-| <a name="input_create_rds_cluster_parameter_group"></a> [create\_rds\_cluster\_parameter\_group](#input\_create\_rds\_cluster\_parameter\_group) | Whether to create this resource or not? | `bool` | `true` | no |
-| <a name="input_database_name"></a> [database\_name](#input\_database\_name) | Name for an automatically created database on cluster creation | `string` | `null` | no |
-| <a name="input_db_cluster_instance_class"></a> [db\_cluster\_instance\_class](#input\_db\_cluster\_instance\_class) | The compute and memory capacity of each DB instance in the Multi-AZ DB cluster, for example db.m6g.xlarge. Not all DB instance classes are available in all AWS Regions | `string` | `null` | no |
-| <a name="input_db_cluster_parameter_group_name"></a> [db\_cluster\_parameter\_group\_name](#input\_db\_cluster\_parameter\_group\_name) | A cluster parameter group to associate with the cluster | `string` | `null` | no |
-| <a name="input_db_instance_parameter_group_name"></a> [db\_instance\_parameter\_group\_name](#input\_db\_instance\_parameter\_group\_name) | Instance parameter group to associate with all instances of the DB cluster | `string` | `null` | no |
-| <a name="input_db_parameter_group_description"></a> [db\_parameter\_group\_description](#input\_db\_parameter\_group\_description) | The description of the DB parameter group. Defaults to "Managed by Terraform" | `string` | `"Managed by Terraform"` | no |
-| <a name="input_db_parameter_group_family"></a> [db\_parameter\_group\_family](#input\_db\_parameter\_group\_family) | The family of the DB parameter group | `string` | `null` | no |
-| <a name="input_db_parameter_group_name"></a> [db\_parameter\_group\_name](#input\_db\_parameter\_group\_name) | Required when `create_db_parameter_group` is true. The name of the DB parameter group | `string` | `""` | no |
-| <a name="input_db_parameter_group_parameters"></a> [db\_parameter\_group\_parameters](#input\_db\_parameter\_group\_parameters) | A list of DB parameter maps to apply | `list(map(string))` | `[]` | no |
-| <a name="input_db_parameter_group_tags"></a> [db\_parameter\_group\_tags](#input\_db\_parameter\_group\_tags) | A map of tags to assign to the resource | `map(string)` | `{}` | no |
-| <a name="input_db_parameter_group_use_name_prefix"></a> [db\_parameter\_group\_use\_name\_prefix](#input\_db\_parameter\_group\_use\_name\_prefix) | Determines whether to use `name` as is or create a unique name beginning with `name` as the specified prefix | `bool` | `true` | no |
-| <a name="input_db_subnet_group_description"></a> [db\_subnet\_group\_description](#input\_db\_subnet\_group\_description) | The description of the DB parameter group. Defaults to "Managed by Terraform" | `string` | `"Managed by Terraform"` | no |
-| <a name="input_db_subnet_group_name"></a> [db\_subnet\_group\_name](#input\_db\_subnet\_group\_name) | The name of the DB parameter group | `string` | `""` | no |
-| <a name="input_db_subnet_group_subnet_ids"></a> [db\_subnet\_group\_subnet\_ids](#input\_db\_subnet\_group\_subnet\_ids) | Required when `create_db_subnet_group` is true. A list of VPC subnet IDs | `list(string)` | `[]` | no |
-| <a name="input_db_subnet_group_tags"></a> [db\_subnet\_group\_tags](#input\_db\_subnet\_group\_tags) | A map of tags to assign to the resource | `map(string)` | `{}` | no |
-| <a name="input_db_subnet_group_use_name_prefix"></a> [db\_subnet\_group\_use\_name\_prefix](#input\_db\_subnet\_group\_use\_name\_prefix) | Determines whether to use `name` as is or create a unique name beginning with `name` as the specified prefix | `bool` | `true` | no |
-| <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | If the DB instance should have deletion protection enabled. The database can't be deleted when this value is set to `true` | `string` | `false` | no |
-| <a name="input_enable_global_write_forwarding"></a> [enable\_global\_write\_forwarding](#input\_enable\_global\_write\_forwarding) | Whether cluster should forward writes to an associated global cluster. Applied to secondary clusters to enable them to forward writes to an `aws_rds_global_cluster`'s primary cluster | `bool` | `null` | no |
-| <a name="input_enable_http_endpoint"></a> [enable\_http\_endpoint](#input\_enable\_http\_endpoint) | Enable HTTP endpoint (data API). Only valid when `engine_mode` is set to `serverless` | `bool` | `null` | no |
-| <a name="input_enabled_cloudwatch_logs_exports"></a> [enabled\_cloudwatch\_logs\_exports](#input\_enabled\_cloudwatch\_logs\_exports) | Set of log types to export to cloudwatch. If omitted, no logs will be exported. The following log types are supported: `audit`, `error`, `general`, `slowquery`, `postgresql` (PostgreSQL) | `list(string)` | `[]` | no |
-| <a name="input_engine"></a> [engine](#input\_engine) | The name of the database engine to be used for this DB cluster. Defaults to `aurora`. Valid Values: `aurora`, `aurora-mysql`, `aurora-postgresql`, `mysql`, `postgres`. (Note that mysql and postgres are Multi-AZ RDS clusters) | `string` | `"aurora"` | no |
-| <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The database engine mode. Valid values: `global` (only valid for Aurora MySQL 1.21 and earlier), `multimaster`, `parallelquery`, `provisioned`, `serverless`. Defaults to: `provisioned` | `string` | `"provisioned"` | no |
-| <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | The database engine version. Updating this argument results in an outage | `string` | `null` | no |
-| <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | The name of your final DB snapshot when this DB cluster is deleted. If omitted, no final snapshot will be made | `string` | `null` | no |
-| <a name="input_global_cluster_identifier"></a> [global\_cluster\_identifier](#input\_global\_cluster\_identifier) | The global cluster identifier specified on `aws_rds_global_cluster` | `string` | `null` | no |
-| <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specifies whether or not mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled | `bool` | `null` | no |
-| <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A List of ARNs for the IAM roles to associate to the RDS Cluster. | `list(string)` | `[]` | no |
-| <a name="input_iops"></a> [iops](#input\_iops) | The amount of Provisioned IOPS (input/output operations per second) to be initially allocated for each DB instance in the Multi-AZ DB cluster | `number` | `null` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The ARN for the KMS encryption key. When specifying `kms_key_id`, `storage_encrypted` needs to be set to `true` | `string` | `null` | no |
-| <a name="input_master_password"></a> [master\_password](#input\_master\_password) | Required when `create_rds_cluster` is true. Password for the master DB user | `string` | `""` | no |
-| <a name="input_master_username"></a> [master\_username](#input\_master\_username) | Required when `create_rds_cluster` is true. Username for the master DB user | `string` | `""` | no |
-| <a name="input_port"></a> [port](#input\_port) | The port on which the DB accepts connections | `number` | `null` | no |
-| <a name="input_preferred_backup_window"></a> [preferred\_backup\_window](#input\_preferred\_backup\_window) | The daily time range during which automated backups are created if automated backups are enabled using the BackupRetentionPeriod parameter.Time in UTC. Defaults: `02:00-03:00` | `string` | `"02:00-03:00"` | no |
-| <a name="input_preferred_maintenance_window"></a> [preferred\_maintenance\_window](#input\_preferred\_maintenance\_window) | The weekly time range during which system maintenance can occur, in (UTC). Defaults: `sun:05:00-sun:06:00` | `string` | `"sun:05:00-sun:06:00"` | no |
-| <a name="input_rds_cluster_instance_tags"></a> [rds\_cluster\_instance\_tags](#input\_rds\_cluster\_instance\_tags) | A map of tags to assign to the DB cluster | `map(string)` | `{}` | no |
-| <a name="input_rds_cluster_instances"></a> [rds\_cluster\_instances](#input\_rds\_cluster\_instances) | Map of the RDS cluster instances | `map(any)` | `{}` | no |
-| <a name="input_rds_cluster_parameter_group_description"></a> [rds\_cluster\_parameter\_group\_description](#input\_rds\_cluster\_parameter\_group\_description) | The description of the DB cluster parameter group. Defaults to "Managed by Terraform" | `string` | `"Managed by Terraform"` | no |
-| <a name="input_rds_cluster_parameter_group_family"></a> [rds\_cluster\_parameter\_group\_family](#input\_rds\_cluster\_parameter\_group\_family) | The family of the DB cluster parameter group | `string` | `null` | no |
-| <a name="input_rds_cluster_parameter_group_name"></a> [rds\_cluster\_parameter\_group\_name](#input\_rds\_cluster\_parameter\_group\_name) | Required when `create_rds_cluster_parameter_group` is true. The name of the DB cluster parameter group | `string` | `""` | no |
-| <a name="input_rds_cluster_parameter_group_parameters"></a> [rds\_cluster\_parameter\_group\_parameters](#input\_rds\_cluster\_parameter\_group\_parameters) | A list of DB parameter maps to apply | `list(map(string))` | `[]` | no |
-| <a name="input_rds_cluster_parameter_group_tags"></a> [rds\_cluster\_parameter\_group\_tags](#input\_rds\_cluster\_parameter\_group\_tags) | A map of tags to assign to the resource | `map(string)` | `{}` | no |
-| <a name="input_rds_cluster_parameter_group_use_name_prefix"></a> [rds\_cluster\_parameter\_group\_use\_name\_prefix](#input\_rds\_cluster\_parameter\_group\_use\_name\_prefix) | Determines whether to use `name` as is or create a unique name beginning with `name` as the specified prefix | `bool` | `true` | no |
-| <a name="input_rds_cluster_tags"></a> [rds\_cluster\_tags](#input\_rds\_cluster\_tags) | A map of tags to assign to the DB cluster | `map(string)` | `{}` | no |
-| <a name="input_replication_source_identifier"></a> [replication\_source\_identifier](#input\_replication\_source\_identifier) | ARN of a source DB cluster or DB instance if this DB cluster is to be created as a Read Replica | `string` | `null` | no |
-| <a name="input_restore_to_point_in_time"></a> [restore\_to\_point\_in\_time](#input\_restore\_to\_point\_in\_time) | Map of nested attributes for cloning Aurora cluster | `map(string)` | `{}` | no |
-| <a name="input_s3_import"></a> [s3\_import](#input\_s3\_import) | Configuration map used to restore from a Percona Xtrabackup in S3 (only MySQL is supported) | `map(string)` | `null` | no |
-| <a name="input_scaling_configuration"></a> [scaling\_configuration](#input\_scaling\_configuration) | Nested attribute with scaling properties. Only valid when `engine_mode` is set to `serverless` | `map(string)` | `{}` | no |
-| <a name="input_skip_final_snapshot"></a> [skip\_final\_snapshot](#input\_skip\_final\_snapshot) | Determines whether a final DB snapshot is created before the DB cluster is deleted. If true is specified, no DB snapshot is created. If false is specified, a DB snapshot is created before the DB cluster is deleted, using the value from `final_snapshot_identifier` | `bool` | `false` | no |
-| <a name="input_snapshot_identifier"></a> [snapshot\_identifier](#input\_snapshot\_identifier) | Specifies whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a DB cluster snapshot, or the ARN when specifying a DB snapshot | `string` | `null` | no |
-| <a name="input_source_region"></a> [source\_region](#input\_source\_region) | The source region for an encrypted replica DB cluster | `string` | `null` | no |
-| <a name="input_storage_encrypted"></a> [storage\_encrypted](#input\_storage\_encrypted) | Specifies whether the DB cluster is encrypted. The default is `false` for `provisioned engine_mode` and `true` for `serverless engine_mode`. When restoring an unencrypted `snapshot_identifier`, the `kms_key_id` argument must be provided to encrypt the restored cluster. Terraform will only perform drift detection if a configuration value is provided | `bool` | `null` | no |
-| <a name="input_storage_type"></a> [storage\_type](#input\_storage\_type) | Specifies the storage type to be associated with the DB cluster. (This setting is required to create a Multi-AZ DB cluster). Valid values: `io1` | `string` | `null` | no |
-| <a name="input_use_cluster_identifier_prefix"></a> [use\_cluster\_identifier\_prefix](#input\_use\_cluster\_identifier\_prefix) | Determines whether to use `cluster_identifier` as is or create a unique name beginning with `cluster_identifier` as the specified prefix | `bool` | `true` | no |
-| <a name="input_vpc_security_group_ids"></a> [vpc\_security\_group\_ids](#input\_vpc\_security\_group\_ids) | List of VPC security groups to associate with the Cluster | `list(string)` | `[]` | no |
+| <a name="input_create_parameter_group"></a> [create\_parameter\_group](#input\_create\_parameter\_group) | Determinate to creates `parameter_group` resources or not | `string` | `true` | no |
+| <a name="input_create_replication_group"></a> [create\_replication\_group](#input\_create\_replication\_group) | Determinate to creates `replication_group` resources or not | `string` | `true` | no |
+| <a name="input_create_subnet_group"></a> [create\_subnet\_group](#input\_create\_subnet\_group) | Determinate to creates `subnet_group` resources or not | `string` | `true` | no |
+| <a name="input_parameter_group_description"></a> [parameter\_group\_description](#input\_parameter\_group\_description) | The description of the ElastiCache parameter group. Defaults to `Managed by Terraform` | `string` | `"Managed by Terraform"` | no |
+| <a name="input_parameter_group_family"></a> [parameter\_group\_family](#input\_parameter\_group\_family) | Required if `create_parameter_group` is set to true. The family of the ElastiCache parameter group | `string` | `""` | no |
+| <a name="input_parameter_group_name"></a> [parameter\_group\_name](#input\_parameter\_group\_name) | Required if `create_parameter_group` is set to true. The name of the ElastiCache parameter group | `string` | `""` | no |
+| <a name="input_parameter_group_parameters"></a> [parameter\_group\_parameters](#input\_parameter\_group\_parameters) | A list of ElastiCache parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
+| <a name="input_parameter_group_tags"></a> [parameter\_group\_tags](#input\_parameter\_group\_tags) | Key-value mapping of resource tags | `map(string)` | `{}` | no |
+| <a name="input_replication_group_apply_immediately"></a> [replication\_group\_apply\_immediately](#input\_replication\_group\_apply\_immediately) | Specifies whether any modifications are applied immediately, or during the next maintenance window. Default is `false` | `bool` | `false` | no |
+| <a name="input_replication_group_at_rest_encryption_enabled"></a> [replication\_group\_at\_rest\_encryption\_enabled](#input\_replication\_group\_at\_rest\_encryption\_enabled) | Whether to enable encryption at rest | `bool` | `null` | no |
+| <a name="input_replication_group_auth_token"></a> [replication\_group\_auth\_token](#input\_replication\_group\_auth\_token) | Password used to access a password protected server. Can be specified only if `transit_encryption_enabled = true` | `string` | `null` | no |
+| <a name="input_replication_group_auto_minor_version_upgrade"></a> [replication\_group\_auto\_minor\_version\_upgrade](#input\_replication\_group\_auto\_minor\_version\_upgrade) | Specifies whether minor version engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window. Only supported for engine type "redis" and if the engine version is 6 or higher. Defaults to `true` | `bool` | `true` | no |
+| <a name="input_replication_group_automatic_failover_enabled"></a> [replication\_group\_automatic\_failover\_enabled](#input\_replication\_group\_automatic\_failover\_enabled) | Specifies whether a read-only replica will be automatically promoted to read/write primary if the existing primary fails. If enabled, number\_cache\_clusters must be greater than 1. Must be enabled for Redis (cluster mode enabled) replication groups. Defaults to `false` | `bool` | `false` | no |
+| <a name="input_replication_group_data_tiering_enabled"></a> [replication\_group\_data\_tiering\_enabled](#input\_replication\_group\_data\_tiering\_enabled) | Enables data tiering. Data tiering is only supported for replication groups using the r6gd node type. This parameter must be set to true when using r6gd nodes | `bool` | `null` | no |
+| <a name="input_replication_group_description"></a> [replication\_group\_description](#input\_replication\_group\_description) | Required if `create_replication_group` is set to `true`. User-created description for the replication group | `string` | `""` | no |
+| <a name="input_replication_group_engine"></a> [replication\_group\_engine](#input\_replication\_group\_engine) | Name of the cache engine to be used for the clusters in this replication group. The only valid value is `redis` | `string` | `"redis"` | no |
+| <a name="input_replication_group_engine_version"></a> [replication\_group\_engine\_version](#input\_replication\_group\_engine\_version) | Version number of the cache engine to be used for the cache clusters in this replication group. If the version is 6 or higher, the major and minor version can be set, e.g., 6.2, or the minor version can be unspecified which will use the latest version at creation time, e.g., 6.x. Otherwise, specify the full version desired, e.g., 5.0.6. The actual engine version used is returned in the attribute `engine_version_actual` | `string` | `null` | no |
+| <a name="input_replication_group_final_snapshot_identifier"></a> [replication\_group\_final\_snapshot\_identifier](#input\_replication\_group\_final\_snapshot\_identifier) | The name of your final node group (shard) snapshot. ElastiCache creates the snapshot from the primary node in the cluster. If omitted, no final snapshot will be made | `string` | `null` | no |
+| <a name="input_replication_group_global_replication_group_id"></a> [replication\_group\_global\_replication\_group\_id](#input\_replication\_group\_global\_replication\_group\_id) | The ID of the global replication group to which this replication group should belong | `string` | `null` | no |
+| <a name="input_replication_group_kms_key_id"></a> [replication\_group\_kms\_key\_id](#input\_replication\_group\_kms\_key\_id) | The ARN of the key that you wish to use if encrypting at rest. If not supplied, uses service managed encryption. Can be specified only if `at_rest_encryption_enabled = true` | `string` | `null` | no |
+| <a name="input_replication_group_log_delivery_configuration"></a> [replication\_group\_log\_delivery\_configuration](#input\_replication\_group\_log\_delivery\_configuration) | Specifies the destination and format of Redis SLOWLOG or Redis Engine Log | `list(map(string))` | `[]` | no |
+| <a name="input_replication_group_maintenance_window"></a> [replication\_group\_maintenance\_window](#input\_replication\_group\_maintenance\_window) | Specifies the weekly time range for when maintenance on the cache cluster is performed. The format is `ddd:hh24:mi-ddd:hh24:mi` (24H Clock UTC). The minimum maintenance window is a 60 minute period. Example: `sun:05:00-sun:09:00` | `string` | `null` | no |
+| <a name="input_replication_group_multi_az_enabled"></a> [replication\_group\_multi\_az\_enabled](#input\_replication\_group\_multi\_az\_enabled) | Specifies whether to enable Multi-AZ Support for the replication group. If true, automatic\_failover\_enabled must also be enabled. Defaults to `false` | `bool` | `false` | no |
+| <a name="input_replication_group_node_type"></a> [replication\_group\_node\_type](#input\_replication\_group\_node\_type) | Instance class to be used | `string` | `null` | no |
+| <a name="input_replication_group_notification_topic_arn"></a> [replication\_group\_notification\_topic\_arn](#input\_replication\_group\_notification\_topic\_arn) | ARN of an SNS topic to send ElastiCache notifications to | `string` | `null` | no |
+| <a name="input_replication_group_num_cache_clusters"></a> [replication\_group\_num\_cache\_clusters](#input\_replication\_group\_num\_cache\_clusters) | Number of cache clusters (primary and replicas) this replication group will have. If Multi-AZ is enabled, the value of this parameter must be at least 2. Updates will occur before other modifications. Defaults to `1` | `string` | `1` | no |
+| <a name="input_replication_group_parameter_group_name"></a> [replication\_group\_parameter\_group\_name](#input\_replication\_group\_parameter\_group\_name) | Name of the parameter group to associate with this replication group | `string` | `null` | no |
+| <a name="input_replication_group_port"></a> [replication\_group\_port](#input\_replication\_group\_port) | Port number on which each of the cache nodes will accept connections. For Memcache the default is 11211, and for Redis the default port is 6379 | `number` | `null` | no |
+| <a name="input_replication_group_preferred_cache_cluster_azs"></a> [replication\_group\_preferred\_cache\_cluster\_azs](#input\_replication\_group\_preferred\_cache\_cluster\_azs) | List of EC2 availability zones in which the replication group's cache clusters will be created | `list(string)` | `[]` | no |
+| <a name="input_replication_group_replication_group_id"></a> [replication\_group\_replication\_group\_id](#input\_replication\_group\_replication\_group\_id) | Required if `create_replication_group` is set to `true`. Replication group identifier. This parameter is stored as a lowercase string | `string` | `""` | no |
+| <a name="input_replication_group_security_group_ids"></a> [replication\_group\_security\_group\_ids](#input\_replication\_group\_security\_group\_ids) | One or more Amazon VPC security groups associated with this replication group | `list(string)` | `[]` | no |
+| <a name="input_replication_group_security_group_names"></a> [replication\_group\_security\_group\_names](#input\_replication\_group\_security\_group\_names) | List of cache security group names to associate with this replication group | `list(string)` | `[]` | no |
+| <a name="input_replication_group_snapshot_arns"></a> [replication\_group\_snapshot\_arns](#input\_replication\_group\_snapshot\_arns) | List of ARNs that identify Redis RDB snapshot files stored in Amazon S3 | `list(string)` | `[]` | no |
+| <a name="input_replication_group_snapshot_name"></a> [replication\_group\_snapshot\_name](#input\_replication\_group\_snapshot\_name) | Name of a snapshot from which to restore data into the new node group | `string` | `null` | no |
+| <a name="input_replication_group_snapshot_retention_limit"></a> [replication\_group\_snapshot\_retention\_limit](#input\_replication\_group\_snapshot\_retention\_limit) | Number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them | `number` | `null` | no |
+| <a name="input_replication_group_snapshot_window"></a> [replication\_group\_snapshot\_window](#input\_replication\_group\_snapshot\_window) | Daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster | `string` | `null` | no |
+| <a name="input_replication_group_subnet_group_name"></a> [replication\_group\_subnet\_group\_name](#input\_replication\_group\_subnet\_group\_name) | Name of the cache subnet group to be used for the replication group | `string` | `null` | no |
+| <a name="input_replication_group_tags"></a> [replication\_group\_tags](#input\_replication\_group\_tags) | Map of tags to assign to the resource | `map(string)` | `{}` | no |
+| <a name="input_replication_group_transit_encryption_enabled"></a> [replication\_group\_transit\_encryption\_enabled](#input\_replication\_group\_transit\_encryption\_enabled) | Whether to enable encryption in transit | `bool` | `null` | no |
+| <a name="input_replication_group_user_group_ids"></a> [replication\_group\_user\_group\_ids](#input\_replication\_group\_user\_group\_ids) | User Group ID to associate with the replication group | `list(string)` | `[]` | no |
+| <a name="input_subnet_group_description"></a> [subnet\_group\_description](#input\_subnet\_group\_description) | Description for the cache subnet group. Defaults to `Managed by Terraform` | `string` | `"Managed by Terraform"` | no |
+| <a name="input_subnet_group_name"></a> [subnet\_group\_name](#input\_subnet\_group\_name) | Name for the cache subnet group | `string` | `""` | no |
+| <a name="input_subnet_group_subnet_ids"></a> [subnet\_group\_subnet\_ids](#input\_subnet\_group\_subnet\_ids) | List of VPC Subnet IDs for the cache subnet group | `list(string)` | `[]` | no |
+| <a name="input_subnet_group_tags"></a> [subnet\_group\_tags](#input\_subnet\_group\_tags) | Key-value map of resource tags | `map(string)` | `{}` | no |
+| <a name="input_user_groups"></a> [user\_groups](#input\_user\_groups) | Map of user groups with group id as a key | `map(any)` | `{}` | no |
+| <a name="input_user_tags"></a> [user\_tags](#input\_user\_tags) | A list of tags to be added to this resource | `map(string)` | `{}` | no |
+| <a name="input_users"></a> [users](#input\_users) | Map of users to create where `user_id` is a key | `map(any)` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_arn"></a> [arn](#output\_arn) | Amazon Resource Name (ARN) of cluster |
-| <a name="output_availability_zones"></a> [availability\_zones](#output\_availability\_zones) | The availability zone of the instance |
-| <a name="output_backup_retention_period"></a> [backup\_retention\_period](#output\_backup\_retention\_period) | The backup retention period |
-| <a name="output_cluster_identifier"></a> [cluster\_identifier](#output\_cluster\_identifier) | The RDS Cluster Identifier |
-| <a name="output_cluster_members"></a> [cluster\_members](#output\_cluster\_members) | List of RDS Instances that are a part of this cluster |
-| <a name="output_cluster_resource_id"></a> [cluster\_resource\_id](#output\_cluster\_resource\_id) | The RDS Cluster Resource ID |
-| <a name="output_database_name"></a> [database\_name](#output\_database\_name) | The database name |
-| <a name="output_db_parameter_group_arn"></a> [db\_parameter\_group\_arn](#output\_db\_parameter\_group\_arn) | The ARN of the db parameter group |
-| <a name="output_db_parameter_group_family"></a> [db\_parameter\_group\_family](#output\_db\_parameter\_group\_family) | The family of the db parameter group |
-| <a name="output_db_parameter_group_id"></a> [db\_parameter\_group\_id](#output\_db\_parameter\_group\_id) | The ID of the db parameter group |
-| <a name="output_db_parameter_group_name"></a> [db\_parameter\_group\_name](#output\_db\_parameter\_group\_name) | The name of the db parameter group |
-| <a name="output_db_parameter_group_parameters"></a> [db\_parameter\_group\_parameters](#output\_db\_parameter\_group\_parameters) | The parameters of the db parameter group |
-| <a name="output_db_subnet_group_arn"></a> [db\_subnet\_group\_arn](#output\_db\_subnet\_group\_arn) | The ARN of the db subnet group |
-| <a name="output_db_subnet_group_id"></a> [db\_subnet\_group\_id](#output\_db\_subnet\_group\_id) | The ID of the db subnet group |
-| <a name="output_db_subnet_group_name"></a> [db\_subnet\_group\_name](#output\_db\_subnet\_group\_name) | The name of the db subnet group |
-| <a name="output_db_subnet_group_subnet_ids"></a> [db\_subnet\_group\_subnet\_ids](#output\_db\_subnet\_group\_subnet\_ids) | The subnets IDs of the db subnet group |
-| <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | The DNS address of the RDS instance |
-| <a name="output_engine"></a> [engine](#output\_engine) | The database engine |
-| <a name="output_engine_version"></a> [engine\_version](#output\_engine\_version) | The running version of the database |
-| <a name="output_engine_version_actual"></a> [engine\_version\_actual](#output\_engine\_version\_actual) | The running version of the database |
-| <a name="output_hosted_zone_id"></a> [hosted\_zone\_id](#output\_hosted\_zone\_id) | The Route53 Hosted Zone ID of the endpoint |
-| <a name="output_id"></a> [id](#output\_id) | The RDS Cluster Identifier |
-| <a name="output_master_username"></a> [master\_username](#output\_master\_username) | The master username for the database |
-| <a name="output_port"></a> [port](#output\_port) | The database port |
-| <a name="output_preferred_backup_window"></a> [preferred\_backup\_window](#output\_preferred\_backup\_window) | The daily time range during which the backups happen |
-| <a name="output_preferred_maintenance_window"></a> [preferred\_maintenance\_window](#output\_preferred\_maintenance\_window) | The maintenance window |
-| <a name="output_rds_cluster_instances"></a> [rds\_cluster\_instances](#output\_rds\_cluster\_instances) | The list of the rds cluster |
-| <a name="output_rds_cluster_parameter_group_arn"></a> [rds\_cluster\_parameter\_group\_arn](#output\_rds\_cluster\_parameter\_group\_arn) | The ARN of the db cluster parameter group |
-| <a name="output_rds_cluster_parameter_group_family"></a> [rds\_cluster\_parameter\_group\_family](#output\_rds\_cluster\_parameter\_group\_family) | The family of the db cluster parameter group |
-| <a name="output_rds_cluster_parameter_group_id"></a> [rds\_cluster\_parameter\_group\_id](#output\_rds\_cluster\_parameter\_group\_id) | The ID of the db cluster parameter group |
-| <a name="output_rds_cluster_parameter_group_name"></a> [rds\_cluster\_parameter\_group\_name](#output\_rds\_cluster\_parameter\_group\_name) | The name of the db cluster parameter group |
-| <a name="output_rds_cluster_parameter_group_parameters"></a> [rds\_cluster\_parameter\_group\_parameters](#output\_rds\_cluster\_parameter\_group\_parameters) | The parameters of the db cluster parameter group |
-| <a name="output_reader_endpoint"></a> [reader\_endpoint](#output\_reader\_endpoint) | A read-only endpoint for the Aurora cluster, automatically load-balanced across replicas |
-| <a name="output_replication_source_identifier"></a> [replication\_source\_identifier](#output\_replication\_source\_identifier) | ARN of the source DB cluster or DB instance if this DB cluster is created as a Read Replica |
-| <a name="output_storage_encrypted"></a> [storage\_encrypted](#output\_storage\_encrypted) | Specifies whether the DB cluster is encrypted |
+| <a name="output_parameter_group_arn"></a> [parameter\_group\_arn](#output\_parameter\_group\_arn) | The AWS ARN associated with the parameter group |
+| <a name="output_parameter_group_id"></a> [parameter\_group\_id](#output\_parameter\_group\_id) | The ElastiCache parameter group name |
+| <a name="output_replication_group_arn"></a> [replication\_group\_arn](#output\_replication\_group\_arn) | ARN of the created ElastiCache Replication Group |
+| <a name="output_replication_group_cluster_enabled"></a> [replication\_group\_cluster\_enabled](#output\_replication\_group\_cluster\_enabled) | Indicates if cluster mode is enabled |
+| <a name="output_replication_group_configuration_endpoint_address"></a> [replication\_group\_configuration\_endpoint\_address](#output\_replication\_group\_configuration\_endpoint\_address) | Address of the replication group configuration endpoint when cluster mode is enabled |
+| <a name="output_replication_group_engine_version_actual"></a> [replication\_group\_engine\_version\_actual](#output\_replication\_group\_engine\_version\_actual) | Because ElastiCache pulls the latest minor or patch for a version, this attribute returns the running version of the cache engine |
+| <a name="output_replication_group_id"></a> [replication\_group\_id](#output\_replication\_group\_id) | ID of the ElastiCache Replication Group |
+| <a name="output_replication_group_member_clusters"></a> [replication\_group\_member\_clusters](#output\_replication\_group\_member\_clusters) | Identifiers of all the nodes that are part of this replication group |
+| <a name="output_replication_group_primary_endpoint_address"></a> [replication\_group\_primary\_endpoint\_address](#output\_replication\_group\_primary\_endpoint\_address) | (Redis only) Address of the endpoint for the primary node in the replication group, if the cluster mode is disabled |
+| <a name="output_replication_group_reader_endpoint_address"></a> [replication\_group\_reader\_endpoint\_address](#output\_replication\_group\_reader\_endpoint\_address) | (Redis only) Address of the endpoint for the reader node in the replication group, if the cluster mode is disabled |
+| <a name="output_subnet_group_name"></a> [subnet\_group\_name](#output\_subnet\_group\_name) | The Name of the ElastiCache Subnet Group |
+| <a name="output_subnet_group_subnet_ids"></a> [subnet\_group\_subnet\_ids](#output\_subnet\_group\_subnet\_ids) | The Subnet IDs of the ElastiCache Subnet Group |
+| <a name="output_user_groups"></a> [user\_groups](#output\_user\_groups) | The users group id |
+| <a name="output_users"></a> [users](#output\_users) | The users id and arn |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
