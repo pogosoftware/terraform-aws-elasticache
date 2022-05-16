@@ -34,8 +34,7 @@ module "user" {
   engine               = each.value.engine
   passwords            = lookup(each.value, "passwords", [])
   no_password_required = lookup(each.value, "no_password_required", false)
-
-  tags = var.user_tags
+  tags                 = lookup(each.value, "tags", {})
 }
 
 module "user_group" {

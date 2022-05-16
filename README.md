@@ -74,7 +74,6 @@ No resources.
 | <a name="input_subnet_group_subnet_ids"></a> [subnet\_group\_subnet\_ids](#input\_subnet\_group\_subnet\_ids) | List of VPC Subnet IDs for the cache subnet group | `list(string)` | `[]` | no |
 | <a name="input_subnet_group_tags"></a> [subnet\_group\_tags](#input\_subnet\_group\_tags) | Key-value map of resource tags | `map(string)` | `{}` | no |
 | <a name="input_user_groups"></a> [user\_groups](#input\_user\_groups) | Map of user groups with group id as a key | `map(any)` | `{}` | no |
-| <a name="input_user_tags"></a> [user\_tags](#input\_user\_tags) | A list of tags to be added to this resource | `map(string)` | `{}` | no |
 | <a name="input_users"></a> [users](#input\_users) | Map of users to create where `user_id` is a key | `map(any)` | `{}` | no |
 
 ## Outputs
