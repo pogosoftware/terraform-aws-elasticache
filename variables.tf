@@ -82,12 +82,6 @@ variable "users" {
   type        = map(any)
 }
 
-variable "user_tags" {
-  default     = {}
-  description = "A list of tags to be added to this resource"
-  type        = map(string)
-}
-
 ##########################################################################
 ### USER GROUP
 ##########################################################################
